@@ -10,8 +10,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+app.get('/',()=>{
+    res.send("Hello from DCS")
+})
 // redirect 
-app.use('/api',require('./sendMail'))
+app.use("/.netlify/functions/app", require('./sendMail'));
+// app.use('/api',require('./sendMail'))
 
 app.listen(PORT, ()=>{
     console.log("Server Is Running on", PORT)
