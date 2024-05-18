@@ -29,13 +29,17 @@ route.post("/sendMail", async (req, res) => {
     };
 
     let response = await axios.request(options);
+
     let { access_token: token } = response.data;
     // send mail
     if (token) return sendMail(token, res, mail, content, subject);
     else return res.status(500).send(error);
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+    res.status(500).send({
+      status: 500,
+      message: "Something went wrong. Please try again Token.",
+      payload: process.env.Tantive_ID,
+    });
   }
 });
 
@@ -51,23 +55,29 @@ async function sendMail(token, res, mail, content, subject) {
       data: {
         message: {
           subject,
-          body: { contentType: "Text", content },
+          body: { contentType: "HTML", content },
           toRecipients: [{ emailAddress: { address: mail } }],
-          //   ccRecipients: [
-          //     { emailAddress: { address: "yashking3002@gmail.com" } },
-          //   ],
+            ccRecipients: [
+              { emailAddress: { address: "siddharth@wholesomemedia.in" } },
+              { emailAddress: { address: "prateek@wholesomemedia.in" } }
+            ],
         },
         saveToSentItems: "false",
       },
     };
 
     const respose = await axios.request(options);
+    
+    return res.redirect('https://dcsconsulting.co/thanks.html')
     return res.status(200).send({
       status: 200,
       message: `Mail sent successfully to ${mail}.`,
     });
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Something went wrong. Please try again. In send Mail",
+    });
   }
 }
 
