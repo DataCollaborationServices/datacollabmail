@@ -57,21 +57,23 @@ async function sendMail(token, res, mail, content, subject) {
           subject,
           body: { contentType: "HTML", content },
           toRecipients: [{ emailAddress: { address: mail } }],
-          ccRecipients : [{
-            emailAddress : {address : "kwalton@dcsconsulting.com"}
-          }],
-            bccRecipients: [
-              { emailAddress: { address: "siddharth@wholesomemedia.in" } },
-              { emailAddress: { address: "prateek@wholesomemedia.in" } }
-            ],
+          ccRecipients: [
+            {
+              emailAddress: { address: "kwalton@dcsconsulting.com" },
+            },
+          ],
+          bccRecipients: [
+            { emailAddress: { address: "siddharth@wholesomemedia.in" } },
+            { emailAddress: { address: "prateek@wholesomemedia.in" } },
+          ],
         },
         saveToSentItems: "false",
       },
     };
 
     const respose = await axios.request(options);
-    
-    return res.redirect('https://dcsconsulting.co/thanks.html')
+
+    return res.redirect("https://dcsconsulting.co/thanks.html");
     return res.status(200).send({
       status: 200,
       message: `Mail sent successfully to ${mail}.`,
