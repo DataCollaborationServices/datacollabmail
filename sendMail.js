@@ -45,7 +45,7 @@ route.post("/sendMail", async (req, res) => {
 
 async function sendMail(token, res, mail, content, subject) {
   try {
-    var options = {
+    const options = {
       method: "POST",
       url: `https://graph.microsoft.com/v1.0/users/${process.env.mail_ID}/sendMail`,
       headers: {
@@ -56,13 +56,8 @@ async function sendMail(token, res, mail, content, subject) {
         message: {
           subject,
           body: { contentType: "HTML", content },
-          toRecipients: [{ emailAddress: { address: mail } }],
+          toRecipients: [{ emailAddress: { address: "kwalton@dcsconsulting.com" } }],
           ccRecipients: [
-            {
-              emailAddress: { address: "kwalton@dcsconsulting.com" },
-            },
-          ],
-          bccRecipients: [
             { emailAddress: { address: "siddharth@wholesomemedia.in" } },
             { emailAddress: { address: "prateek@wholesomemedia.in" } },
           ],
@@ -70,8 +65,26 @@ async function sendMail(token, res, mail, content, subject) {
         saveToSentItems: "false",
       },
     };
+    const thanksOptions = {
+      method: "POST",
+      url: `https://graph.microsoft.com/v1.0/users/${process.env.mail_ID}/sendMail`,
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        message: {
+          subject : "Thank you for contacting us.",
+          body: { contentType: "HTML", content : "Thank you for contacting us. We will get back to you shortly." },
+          toRecipients: [{ emailAddress: { address: mail } }],
+        },
+        saveToSentItems: "false",
+      },
+    };
 
-    const respose = await axios.request(options);
+    const topAdmin = await axios.request(options);
+    const toUser = await axios.request(thanksOptions);
+
 
     return res.redirect("https://dcsconsulting.co/thanks.html");
     return res.status(200).send({
