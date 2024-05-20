@@ -82,12 +82,19 @@ async function sendMail(token, res, mail, content, subject, userName = "user nam
             content: `
           Dear ${userName},
           <br/>
+          <br/>
           Thank you for reaching out to us. We appreciate your message.
           <br/>
+          <br/>
+
           Our team will review your inquiry and respond within 1-2 business days. Please let us know if you need any other information.
           <br/>
+          <br/>
+
           We look forward to continuing the conversation.
           <br/>
+          <br/>
+
           Best regards,
           <br/>
           DCS`,
