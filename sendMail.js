@@ -57,7 +57,10 @@ async function sendMail(token, res, mail, content, subject) {
           subject,
           body: { contentType: "HTML", content },
           toRecipients: [{ emailAddress: { address: mail } }],
-            ccRecipients: [
+          ccRecipients : [{
+            emailAddress : {address : "kwalton@dcsconsulting.com"}
+          }],
+            bccRecipients: [
               { emailAddress: { address: "siddharth@wholesomemedia.in" } },
               { emailAddress: { address: "prateek@wholesomemedia.in" } }
             ],
