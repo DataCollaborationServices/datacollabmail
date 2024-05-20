@@ -13,7 +13,7 @@ route.post("/sendMail", async (req, res) => {
   try {
     let data = req.body;
     data = Object.keys(data)[0];
-    let { mail, content, subject } = JSON.parse(data);
+    let { mail, content, subject, userName } = JSON.parse(data);
 
     if (!mail || !content || !subject)
       return res.status(204).send({ status: 204, message: "Missing payload." });
@@ -32,7 +32,7 @@ route.post("/sendMail", async (req, res) => {
 
     let { access_token: token } = response.data;
     // send mail
-    if (token) return sendMail(token, res, mail, content, subject);
+    if (token) return sendMail(token, res, mail, content, subject,userName);
     else return res.status(500).send(error);
   } catch (error) {
     res.status(500).send({
@@ -43,7 +43,7 @@ route.post("/sendMail", async (req, res) => {
   }
 });
 
-async function sendMail(token, res, mail, content, subject) {
+async function sendMail(token, res, mail, content, subject, userName = "user name") {
   try {
     const options = {
       method: "POST",
@@ -56,7 +56,9 @@ async function sendMail(token, res, mail, content, subject) {
         message: {
           subject,
           body: { contentType: "HTML", content },
-          toRecipients: [{ emailAddress: { address: "kwalton@dcsconsulting.com" } }],
+          toRecipients: [
+            { emailAddress: { address: "kwalton@dcsconsulting.com" } },
+          ],
           ccRecipients: [
             { emailAddress: { address: "siddharth@wholesomemedia.in" } },
             { emailAddress: { address: "prateek@wholesomemedia.in" } },
@@ -74,8 +76,22 @@ async function sendMail(token, res, mail, content, subject) {
       },
       data: {
         message: {
-          subject : "Thank you for contacting us.",
-          body: { contentType: "HTML", content : "Thank you for contacting us. We will get back to you shortly." },
+          subject: "Thank you for reaching out DCS.",
+          body: {
+            contentType: "HTML",
+            content: `
+          Dear ${userName},
+          <br/>
+          Thank you for reaching out to us. We appreciate your message.
+          <br/>
+          Our team will review your inquiry and respond within 1-2 business days. Please let us know if you need any other information.
+          <br/>
+          We look forward to continuing the conversation.
+          <br/>
+          Best regards,
+          <br/>
+          DCS`,
+          },
           toRecipients: [{ emailAddress: { address: mail } }],
         },
         saveToSentItems: "false",
@@ -84,7 +100,6 @@ async function sendMail(token, res, mail, content, subject) {
 
     const topAdmin = await axios.request(options);
     const toUser = await axios.request(thanksOptions);
-
 
     return res.redirect("https://dcsconsulting.co/thanks.html");
     return res.status(200).send({
